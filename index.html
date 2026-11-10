@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0F5E6E">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>EasyCare Health</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap">
+<style>
+/* Layout: one phone-width column, big touch targets, one job per screen, help button always at the bottom. */
+:root{
+  --teal:#0F5E6E; --teal-soft:#E3EFF2; --rust:#A84818; --rust-soft:#FBE8DC;
+  --ink:#1B2430; --muted:#5A6572; --line:#C9D0D6; --grey:#F1F3F5; --paper:#FFFFFF; --desk:#E9ECEE;
+  --ok:#2E7D5B; --ok-soft:#DDEFE6;
+  --font:"Plus Jakarta Sans",system-ui,-apple-system,"PingFang SC","Noto Sans SC","Microsoft YaHei","Noto Sans Tamil",sans-serif;
+  color-scheme:light;
+}
+html{font-size:18px;height:100%}
+html.big{font-size:21px}
+body{height:100%;background:var(--desk);color:var(--ink);font-family:var(--font);font-size:1rem;line-height:1.35;-webkit-tap-highlight-color:transparent}
+*{box-sizing:border-box}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0;text-align:inherit}
+button:focus-visible{outline:3px solid var(--rust);outline-offset:2px}
+.app{position:relative;height:100%;max-width:460px;margin:0 auto;background:var(--paper);display:flex;flex-direction:column;
+  padding-block:14px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));overflow:hidden}
+header{display:flex;flex-direction:column;gap:10px;padding-bottom:12px}
+main{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding-bottom:12px}
+main>*{flex-shrink:0}
+footer{display:flex;flex-direction:column;gap:10px;padding-top:4px}
+.row{display:flex;gap:10px;align-items:center}
+.between{justify-content:space-between}
+h1{font-size:1.45rem;font-weight:800;margin:0;text-wrap:balance;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:.85rem;font-weight:500}
+.eyebrow{font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--teal)}
+.ic{flex:none}
+
+.chip{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 14px;border-radius:12px;font-weight:700;font-size:.9rem;background:var(--grey)}
+.chip.listen{background:var(--teal-soft);color:var(--teal)}
+.chip.listen.on{background:var(--rust-soft);color:var(--rust)}
+.chip.line{background:var(--paper);border:2px solid var(--line)}
+.grow{flex:1;min-width:0}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:60px;padding:8px 16px;border-radius:14px;font-weight:800;font-size:1.05rem;text-align:center}
+.btn.primary{background:var(--teal);color:#fff}
+.btn.help{background:var(--rust);color:#fff}
+.btn.outline{border:2.5px solid var(--teal);color:var(--teal);background:var(--paper)}
+.btn.quiet{background:var(--grey);min-height:52px;font-size:.95rem}
+.btn.danger{color:var(--rust);border:2.5px solid var(--rust);background:var(--paper)}
+.btn:disabled{opacity:.4}
+.btn:active,.tile:active,.opt:active,.chip:active{transform:scale(.98)}
+
+.banner{display:flex;align-items:center;gap:12px;width:100%;background:var(--ink);color:#fff;border-radius:14px;padding:12px 14px}
+.banner .eyebrow{color:#F3B48E}
+.banner b{font-size:1.05rem}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1}
+.tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:150px;padding:14px 8px;border-radius:16px;font-weight:800;font-size:1.05rem;text-align:center;background:var(--teal-soft);line-height:1.2}
+.tile.warm{background:var(--rust-soft)}
+.tile .disc{width:64px;height:64px;border-radius:50%;background:var(--paper);display:grid;place-items:center;color:var(--teal)}
+.tile.warm .disc{color:var(--rust)}
+
+.card{border-radius:16px;padding:16px;background:var(--teal-soft);display:flex;flex-direction:column;gap:6px}
+.card.grey{background:var(--grey)}
+.card.warm{background:var(--rust-soft)}
+.card.okc{background:var(--ok-soft)}
+.bigdate{font-size:2rem;font-weight:800;line-height:1.05}
+.bigtime{font-size:1.4rem;font-weight:800;color:var(--teal)}
+.rule{height:2px;background:rgba(15,94,110,.18);margin:6px 0}
+.meta{display:flex;align-items:center;gap:8px;font-weight:600;font-size:.95rem}
+
+.steps{display:flex;gap:6px}
+.steps i{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.steps i.on{background:var(--teal)}
+.opt{display:flex;align-items:center;gap:12px;width:100%;min-height:76px;padding:12px 14px;border-radius:14px;border:2.5px solid var(--line);background:var(--paper)}
+.opt.sel{border-color:var(--teal);background:var(--teal-soft)}
+.opt b{display:block;font-size:1.15rem;font-weight:800}
+.opt .sub{display:flex;align-items:center;gap:6px}
+.radio{margin-left:auto;flex:none;width:30px;height:30px;border-radius:50%;border:2.5px solid var(--line);display:grid;place-items:center;color:#fff}
+.opt.sel .radio{background:var(--teal);border-color:var(--teal)}
+.box{border-radius:8px}
+
+.slot{display:flex;align-items:center;gap:8px;font-weight:800;margin-top:6px}
+.med{display:flex;align-items:center;gap:12px;min-height:80px;padding:12px;border-radius:14px;border:2.5px solid var(--line)}
+.med.taken{background:var(--teal-soft);border-color:var(--teal-soft)}
+.med b{display:block;font-size:1.1rem;font-weight:800}
+.pillpic{flex:none;width:48px;height:48px;border-radius:50%;background:var(--grey);display:grid;place-items:center}
+.pillpic i{width:22px;height:22px;border-radius:50%;border:2px solid var(--muted);background:#fff}
+.pillpic i.pink{width:16px;height:16px;background:#F3A6B5;border-color:#C96A80}
+.medbtn{margin-left:auto;flex:none;min-width:84px;min-height:56px;padding:4px 10px;border-radius:12px;border:2.5px solid var(--teal);color:var(--teal);font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.95rem;background:var(--paper)}
+.med.taken .medbtn{border-color:transparent;background:none;font-size:.75rem;gap:2px}
+.tick{width:34px;height:34px;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center}
+
+.badge{margin-left:auto;flex:none;padding:6px 12px;border-radius:10px;font-weight:800;font-size:.85rem;color:#fff;background:var(--teal)}
+.badge.hi{background:var(--rust)}
+.res h2{font-size:1.3rem;font-weight:800;margin:0}
+.bar{position:relative;display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;margin-top:22px}
+.bar span{height:12px;border-radius:3px;background:#C9D3DA}
+.bar span:nth-child(2){background:#8CC7A9}
+.bar span:nth-child(3){background:#E79A6F}
+.bar em{position:absolute;top:-16px;transform:translateX(-50%);width:0;height:0;border:8px solid transparent;border-top:11px solid var(--ink);border-bottom:0}
+.scale{display:grid;grid-template-columns:1fr 1fr 1fr;text-align:center;font-size:.8rem;font-weight:700;color:var(--muted)}
+.msg{font-weight:700;font-size:1.05rem;margin:6px 0 0}
+.val{font-size:.8rem;color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums}
+
+.shade{position:absolute;inset:0;background:rgba(27,36,48,.55);display:flex;align-items:flex-end;z-index:5}
+.sheet{width:100%;background:var(--paper);border-radius:22px 22px 0 0;display:flex;flex-direction:column;gap:12px;max-height:92%;overflow-y:auto;
+  padding:22px max(16px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.sheet h2{font-size:1.35rem;font-weight:800;margin:0;text-wrap:balance}
+.sheet p{margin:0;font-size:1.05rem;font-weight:500}
+.bigok{width:72px;height:72px;border-radius:50%;background:var(--ok);color:#fff;display:grid;place-items:center;align-self:center}
+.center{text-align:center;align-items:center}
+.toast{position:absolute;left:16px;right:16px;bottom:96px;z-index:9;background:var(--ink);color:#fff;border-radius:12px;padding:14px 16px;font-weight:700;text-align:center}
+
+.langgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lbtn{min-height:62px;border-radius:12px;border:2.5px solid var(--line);font-weight:800;font-size:1.1rem;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--paper)}
+.lbtn.sel{background:var(--teal);border-color:var(--teal);color:#fff}
+.vbtn{min-height:60px;border-radius:12px;border:2.5px solid var(--line);padding:6px 12px;display:flex;align-items:center;gap:10px;font-weight:800;font-size:.95rem;line-height:1.15;background:var(--paper)}
+.vbtn small{display:block;font-weight:500;font-size:.72rem;color:var(--muted)}
+.vbtn.sel{border-color:var(--rust);background:var(--rust-soft);color:var(--rust)}
+.num{flex:none;width:28px;height:28px;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center;font-weight:800;font-size:.85rem}
+.num.w{background:var(--rust)}
+@media (prefers-reduced-motion:no-preference){.btn,.tile,.opt,.chip{transition:transform .08s}.sheet{animation:up .22s ease-out}@keyframes up{from{transform:translateY(30px);opacity:.6}}}
+</style>
+
+<div class="app" id="app"></div>
+
+<script>
+/* ---------- words: [English, 华语, Melayu, தமிழ்] ---------- */
+const LI={en:0,zh:1,ms:2,ta:3};
+const S={
+chooseLang:["Choose your language","选择语言","Pilih bahasa","மொழியைத் தேர்ந்தெடுக்கவும்"],
+wordsOnScreen:["Words on screen","屏幕文字","Tulisan di skrin","திரையில் எழுத்து"],
+voiceHear:["Voice I hear","我听的语音","Suara yang saya dengar","நான் கேட்கும் குரல்"],
+tapSample:["Includes dialects. Tap to hear a sample.","包括方言。点一下试听。","Termasuk dialek. Tekan untuk dengar contoh.","வட்டார மொழிகளும் உண்டு. மாதிரியைக் கேட்க தட்டவும்."],
+sample:["Hello. I will read the screen for you.","您好。我会为您朗读屏幕上的内容。","Helo. Saya akan bacakan skrin untuk anda.","வணக்கம். திரையில் உள்ளதை உங்களுக்குப் படித்துக் காட்டுகிறேன்."],
+cont:["Continue","继续","Teruskan","தொடரவும்"],
+gm:["Good morning","早上好","Selamat pagi","காலை வணக்கம்"],
+ga:["Good afternoon","下午好","Selamat petang","மதிய வணக்கம்"],
+ge:["Good evening","晚上好","Selamat malam","மாலை வணக்கம்"],
+name:["Mdm Tan","陈女士","Puan Tan","திருமதி டான்"],
+listen:["Listen","听","Dengar","கேளுங்கள்"],
+stop:["Stop","停止","Berhenti","நிறுத்து"],
+bigger:["Bigger words","放大字体","Besarkan tulisan","பெரிய எழுத்து"],
+smaller:["Smaller words","缩小字体","Kecilkan tulisan","சிறிய எழுத்து"],
+nextVisit:["Next visit","下次复诊","Lawatan seterusnya","அடுத்த வருகை"],
+noVisit:["No visit booked","目前没有预约","Tiada lawatan ditempah","வருகை எதுவும் பதிவாகவில்லை"],
+myAppts:["My Appointments","我的预约","Temu Janji Saya","என் சந்திப்புகள்"],
+myMeds:["My Medicine","我的药物","Ubat Saya","என் மருந்துகள்"],
+myResults:["My Test Results","我的检查结果","Keputusan Ujian Saya","என் பரிசோதனை முடிவுகள்"],
+bookVisit:["Book a Visit","预约看诊","Tempah Lawatan","வருகை பதிவு செய்"],
+help:["Call a person for help","找真人帮忙","Hubungi orang untuk bantuan","உதவிக்கு ஒருவரை அழைக்கவும்"],
+back:["Back","返回","Kembali","பின்செல்"],
+changeDate:["Change date","更改日期","Tukar tarikh","தேதியை மாற்று"],
+cancelVisit:["Cancel this visit","取消这次预约","Batalkan lawatan ini","இந்த வருகையை ரத்து செய்"],
+later:["Later","之后","Kemudian","பின்னர்"],
+bookNew:["Book a new visit","预约新的看诊","Tempah lawatan baharu","புதிய வருகை பதிவு செய்"],
+step:["Step {n} of 3","第 {n} 步，共 3 步","Langkah {n} daripada 3","படி {n} / 3"],
+whatFor:["What is the visit for?","您要看什么？","Lawatan ini untuk apa?","வருகை எதற்காக?"],
+pickDay:["Pick a day","选择日期","Pilih hari","நாளைத் தேர்ந்தெடுக்கவும்"],
+showOther:["Show other days","显示其他日期","Tunjuk hari lain","மற்ற நாட்களைக் காட்டு"],
+next:["Next","下一步","Seterusnya","அடுத்து"],
+check:["Check and confirm","核对并确认","Semak dan sahkan","சரிபார்த்து உறுதிசெய்"],
+confirm:["Confirm booking","确认预约","Sahkan tempahan","பதிவை உறுதிசெய்"],
+confirmChange:["Confirm new date","确认新日期","Sahkan tarikh baharu","புதிய தேதியை உறுதிசெய்"],
+booked:["Your visit is booked","预约成功","Lawatan anda telah ditempah","உங்கள் வருகை பதிவாகிவிட்டது"],
+changed:["Your visit date is changed","预约日期已更改","Tarikh lawatan anda telah ditukar","உங்கள் வருகை தேதி மாற்றப்பட்டது"],
+remind:["We will remind you one day before.","我们会提前一天提醒您。","Kami akan ingatkan anda sehari sebelum.","ஒரு நாள் முன்பு உங்களுக்கு நினைவூட்டுவோம்."],
+home:["Back to home","回到主页","Kembali ke laman utama","முகப்புக்குச் செல்"],
+am:["Morning","上午","Pagi","காலை"],
+pm:["Afternoon","下午","Petang","மதியம்"],
+t_diabetes:["Diabetes check-up","糖尿病复诊","Pemeriksaan kencing manis","நீரிழிவு பரிசோதனை"],
+t_eye:["Eye check","眼科检查","Pemeriksaan mata","கண் பரிசோதனை"],
+t_bp:["Blood pressure check","血压检查","Pemeriksaan tekanan darah","இரத்த அழுத்த பரிசோதனை"],
+t_doctor:["See a doctor","看医生","Jumpa doktor","மருத்துவரைப் பார்க்க"],
+place:["Polyclinic, Level 2","综合诊疗所 2 楼","Poliklinik, Tingkat 2","பாலிகிளினிக், 2ஆம் மாடி"],
+cancelQ:["Cancel this visit?","要取消这次预约吗？","Batalkan lawatan ini?","இந்த வருகையை ரத்து செய்யவா?"],
+yesCancel:["Yes, cancel it","是，取消","Ya, batalkan","ஆம், ரத்து செய்"],
+keep:["No, keep it","不，保留","Tidak, kekalkan","இல்லை, வைத்திரு"],
+cancelled:["Visit cancelled","预约已取消","Lawatan dibatalkan","வருகை ரத்து செய்யப்பட்டது"],
+today:["Today","今天","Hari ini","இன்று"],
+mornBf:["Morning · after breakfast","早上 · 早餐后","Pagi · selepas sarapan","காலை · காலை உணவுக்குப் பின்"],
+nightDn:["Night · after dinner","晚上 · 晚餐后","Malam · selepas makan malam","இரவு · இரவு உணவுக்குப் பின்"],
+d_white:["1 white tablet","1 粒白色药片","1 biji pil putih","1 வெள்ளை மாத்திரை"],
+d_pink:["1 small pink tablet","1 粒粉红色小药片","1 biji pil kecil merah jambu","1 சிறிய இளஞ்சிவப்பு மாத்திரை"],
+u_sugar:["for blood sugar","控制血糖","untuk gula darah","இரத்த சர்க்கரைக்கு"],
+u_bp:["for blood pressure","控制血压","untuk tekanan darah","இரத்த அழுத்தத்திற்கு"],
+done:["Done","吃了","Sudah","முடிந்தது"],
+taken:["Taken","已服","Sudah makan","எடுத்தாயிற்று"],
+notTaken:["Not taken yet","还没吃","Belum makan","இன்னும் எடுக்கவில்லை"],
+count:["{a} of {b} taken today","今天已服 {a} / {b}","{a} daripada {b} sudah dimakan hari ini","இன்று {b}-இல் {a} எடுத்தாயிற்று"],
+orderMore:["Running low? Order more","药快吃完了？再订药","Ubat hampir habis? Pesan lagi","மருந்து குறைவா? மேலும் ஆர்டர் செய்"],
+orderTitle:["Which medicine do you need?","您需要哪种药？","Ubat mana yang anda perlukan?","எந்த மருந்து தேவை?"],
+sendOrder:["Send order","提交订单","Hantar pesanan","ஆர்டரை அனுப்பு"],
+orderDone:["Order sent","订单已提交","Pesanan dihantar","ஆர்டர் அனுப்பப்பட்டது"],
+orderInfo:["Collect at the polyclinic pharmacy from {d}.","请在 {d} 起到综合诊疗所药房领取。","Ambil di farmasi poliklinik mulai {d}.","{d} முதல் பாலிகிளினிக் மருந்தகத்தில் பெற்றுக்கொள்ளலாம்."],
+r_sugar:["Blood sugar","血糖","Gula darah","இரத்த சர்க்கரை"],
+r_chol:["Cholesterol","胆固醇","Kolesterol","கொலஸ்ட்ரால்"],
+r_bp:["Blood pressure","血压","Tekanan darah","இரத்த அழுத்தம்"],
+low:["Low","低","Rendah","குறைவு"],
+normal:["Normal","正常","Normal","இயல்பு"],
+high:["High","高","Tinggi","அதிகம்"],
+abitHigh:["A bit high","偏高","Agak tinggi","சற்று அதிகம்"],
+m_sugar:["Your blood sugar is higher than normal. Talk to your doctor at your next visit.","您的血糖比正常高。请在下次复诊时和医生谈谈。","Gula darah anda lebih tinggi daripada biasa. Bincang dengan doktor pada lawatan seterusnya.","உங்கள் இரத்த சர்க்கரை இயல்பை விட அதிகமாக உள்ளது. அடுத்த வருகையில் மருத்துவரிடம் பேசுங்கள்."],
+m_chol:["Good. Keep it up.","很好！请继续保持。","Bagus. Teruskan.","நன்று. இப்படியே தொடருங்கள்."],
+m_bp:["Your blood pressure is normal.","您的血压正常。","Tekanan darah anda normal.","உங்கள் இரத்த அழுத்தம் இயல்பாக உள்ளது."],
+helpTitle:["We can call you","我们可以打电话给您","Kami boleh telefon anda","நாங்கள் உங்களை அழைக்கலாம்"],
+helpBody:["A helper who speaks {v} will call your phone.","会说{v}的服务人员会打电话给您。","Pembantu yang bertutur {v} akan telefon anda.","{v} பேசும் உதவியாளர் உங்களை அழைப்பார்."],
+callMe:["Call me now","现在打给我","Telefon saya sekarang","இப்போது என்னை அழைக்கவும்"],
+close:["Close","关闭","Tutup","மூடு"],
+helpDone:["A helper will call you in about 5 minutes. Keep your phone near you.","服务人员大约 5 分钟内会打给您。请把手机放在身边。","Pembantu akan telefon anda dalam kira-kira 5 minit. Simpan telefon berdekatan.","உதவியாளர் சுமார் 5 நிமிடங்களில் அழைப்பார். தொலைபேசியை அருகில் வைத்திருங்கள்."],
+ok:["OK","好的","OK","சரி"],
+noVoice:["This phone cannot read aloud in this voice.","这部手机无法用这种语音朗读。","Telefon ini tidak dapat membaca dalam suara ini.","இந்தத் தொலைபேசியில் இந்தக் குரல் இல்லை."]
+};
+const LANGS=[["en","English","EN"],["zh","华语","华"],["ms","Melayu","BM"],["ta","தமிழ்","த"]];
+const VOICES={
+ english:{n:"English",s:"",base:"en",tags:["en-sg","en-gb","en"]},
+ mandarin:{n:"华语",s:"Mandarin",base:"zh",tags:["zh-cn","cmn","zh"]},
+ hokkien:{n:"福建话",s:"Hokkien",base:"zh",tags:["nan","zh-tw","zh"]},
+ cantonese:{n:"广东话",s:"Cantonese",base:"zh",tags:["yue","zh-hk","zh"]},
+ teochew:{n:"潮州话",s:"Teochew",base:"zh",tags:["zh-cn","zh"]},
+ hakka:{n:"客家话",s:"Hakka",base:"zh",tags:["hak","zh-tw","zh"]},
+ malay:{n:"Melayu",s:"Malay",base:"ms",tags:["ms","id"]},
+ tamil:{n:"தமிழ்",s:"Tamil",base:"ta",tags:["ta"]}
+};
+const ICON={
+ volume:'<path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/>',
+ stop:'<rect x="6.5" y="6.5" width="11" height="11" rx="2"/>',
+ globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+ calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+ pill:'<path d="M10.5 20.5l10-10a4.95 4.95 0 0 0-7-7l-10 10a4.95 4.95 0 0 0 7 7z"/><path d="M8.5 8.5l7 7"/>',
+ clip:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6"/>',
+ pluscircle:'<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>',
+ phone:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',
+ left:'<path d="M15 18l-6-6 6-6"/>',
+ right:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+ check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>',
+ moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
+ heart:'<path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z"/>',
+ pin:'<path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/>',
+ text:'<path d="M4 19l5-13 5 13M6 14.5h6M17 8v8M13.5 12h7"/>'
+};
+const ic=(n,s=24)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[n]}</svg>`;
+
+/* ---------- dates ---------- */
+const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const fromIso=s=>{const[a,b,c]=s.split("-").map(Number);return new Date(a,b-1,c)};
+const plus=n=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+n);if(d.getDay()===0)d.setDate(d.getDate()+1);return iso(d)};
+const LOC={en:"en-SG",zh:"zh-CN",ms:"ms-MY",ta:"ta-IN"};
+const fd=(s,L,o)=>{try{return new Intl.DateTimeFormat(LOC[L],o).format(fromIso(s))}catch(e){return s}};
+const dShort=(s,L)=>fd(s,L,{weekday:"short",day:"numeric",month:"short"});
+const dLong=(s,L)=>fd(s,L,{weekday:"long",day:"numeric",month:"long"});
+function fTime(hm,L){const[h,m]=hm.split(":").map(Number),h12=h%12||12,x=h12+":"+String(m).padStart(2,"0");
+ if(L==="zh")return(h<12?"上午":h<18?"下午":"晚上")+" "+x;
+ if(L==="ms")return x+" "+(h<12?"pagi":h<19?"petang":"malam");
+ if(L==="ta")return(h<12?"காலை":h<18?"மதியம்":"இரவு")+" "+x;
+ return x+" "+(h<12?"am":"pm")}
+
+/* ---------- state ---------- */
+const KEY="easycare-v1";
+let st={lang:"en",voice:"english",onboarded:false,big:false,appts:null,taken:{d:"",ids:[]}};
+try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s)st=Object.assign(st,s)}catch(e){}
+const todayIso=iso(new Date());
+if(st.appts)st.appts=st.appts.filter(a=>a.date>=todayIso);
+if(!st.appts)st.appts=[{id:1,type:"diabetes",date:plus(2),time:"09:30"},{id:2,type:"eye",date:plus(25),time:"14:00"}];
+if(st.taken.d!==todayIso)st.taken={d:todayIso,ids:(new Date().getHours()>=9)?["m1"]:[]};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}};
+let nav=[st.onboarded?"home":"lang"], modal=null, draft={}, more=false, toastMsg="", toastT=0, orderSel=[], cancelId=null, speaking=false;
+const MEDS=[{id:"m1",name:"Metformin",d:"d_white",u:"u_sugar",slot:"am"},{id:"m2",name:"Amlodipine",d:"d_pink",u:"u_bp",slot:"am",pink:1},{id:"m3",name:"Metformin",d:"d_white",u:"u_sugar",slot:"pm"}];
+const TYPES=["diabetes","eye","bp","doctor"];
+const slots=()=>{const a=[[6,"09:00"],[8,"10:30"],[10,"14:30"]];if(more)a.push([13,"09:30"],[15,"11:00"],[17,"15:00"]);return a.map(([n,t])=>({date:plus(n),time:t}))};
+
+const t=(k,v,L)=>{let s=S[k][LI[L||st.lang]];if(v)for(const x in v)s=s.replace("{"+x+"}",v[x]);return s};
+const vbase=()=>VOICES[st.voice].base;
+const greetKey=()=>{const h=new Date().getHours();return h<12?"gm":h<18?"ga":"ge"};
+const sorted=()=>st.appts.slice().sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+
+/* ---------- voice ---------- */
+function setSpeaking(b){speaking=b;const el=document.getElementById("listenBtn");if(el){el.classList.toggle("on",b);el.innerHTML=ic(b?"stop":"volume",22)+"<span>"+t(b?"stop":"listen")+"</span>"}}
+function speak(text,vid){
+ const sy=window.speechSynthesis;
+ if(!sy||!window.SpeechSynthesisUtterance){toast(t("noVoice"));return}
+ sy.cancel();
+ const u=new SpeechSynthesisUtterance(text),tags=VOICES[vid].tags,vs=sy.getVoices()||[];let pick=null;
+ for(const tg of tags){pick=vs.find(v=>v.lang.toLowerCase().replace("_","-").startsWith(tg));if(pick)break}
+ if(vs.length&&!pick){toast(t("noVoice"));return}
+ if(pick){u.voice=pick;u.lang=pick.lang}else u.lang=tags.find(x=>x.includes("-"))||tags[0];
+ u.rate=.85;u.onend=u.onerror=()=>setSpeaking(false);
+ setSpeaking(true);sy.speak(u)}
+function hush(){try{window.speechSynthesis&&window.speechSynthesis.cancel()}catch(e){}speaking=false}
+try{window.speechSynthesis&&window.speechSynthesis.getVoices()}catch(e){}
+
+/* ---------- screens ---------- */
+const listenBtn=()=>`<button class="chip listen" id="listenBtn" data-act="listen">${ic("volume",22)}<span>${t("listen")}</span></button>`;
+const topbar=()=>`<div class="row between"><button class="chip" data-act="back">${ic("left",22)}<span>${t("back")}</span></button>${listenBtn()}</div>`;
+const helpBtn=()=>`<button class="btn help" data-act="help">${ic("phone")}<span>${t("help")}</span></button>`;
+const apptSay=(a,L)=>[t("t_"+a.type,0,L),dLong(a.date,L),fTime(a.time,L),t("place",0,L)].join(", ");
+
+const SCREENS={
+lang(){
+ const others=LANGS.filter(l=>l[0]!==st.lang).map(l=>S.chooseLang[LI[l[0]]].replace("மொழியைத் தேர்ந்தெடுக்கவும்","மொழி")).join(" · ");
+ return{head:`<div><h1>${t("chooseLang")}</h1><div class="sub">${others}</div></div>`,
+ body:`<div class="row"><span class="num">1</span><b>${t("wordsOnScreen")}</b></div>
+ <div class="langgrid">${LANGS.map(l=>`<button class="lbtn ${st.lang===l[0]?"sel":""}" data-act="setLang" data-v="${l[0]}">${st.lang===l[0]?ic("check",22):""}${l[1]}</button>`).join("")}</div>
+ <div class="row" style="margin-top:8px"><span class="num w">2</span><div><b>${t("voiceHear")}</b><div class="sub">${t("tapSample")}</div></div></div>
+ <div class="langgrid">${Object.entries(VOICES).map(([k,v])=>`<button class="vbtn ${st.voice===k?"sel":""}" data-act="setVoice" data-v="${k}">${ic("volume",20)}<span>${v.n}${v.s?`<small>${v.s}</small>`:""}</span></button>`).join("")}</div>`,
+ foot:`<button class="btn primary" data-act="langDone">${t("cont")} ${ic("right")}</button>`,
+ say:L=>[t("sample",0,L)]}},
+home(){
+ const n=sorted()[0],lc=LANGS.find(l=>l[0]===st.lang)[2];
+ const tile=(k,i,to,w)=>`<button class="tile ${w?"warm":""}" data-act="go" data-v="${to}"><span class="disc">${ic(i,32)}</span>${t(k)}</button>`;
+ return{head:`<div><h1>${t(greetKey())}</h1><div class="sub">${t("name")}</div></div>
+ <div class="row">${listenBtn()}<button class="chip line" data-act="big" aria-label="${t(st.big?"smaller":"bigger")}">${ic("text",24)}${st.big?"−":"+"}</button><button class="chip line grow" data-act="go" data-v="lang">${ic("globe",22)}<span>${lc} · ${VOICES[st.voice].n}</span></button></div>`,
+ body:`<button class="banner" data-act="go" data-v="appts">${ic("calendar",28)}<span><span class="eyebrow">${t("nextVisit")}</span><br><b>${n?dShort(n.date,st.lang)+" · "+fTime(n.time,st.lang):t("noVisit")}</b></span></button>
+ <div class="tiles">${tile("myAppts","calendar","appts")}${tile("myMeds","pill","meds",1)}${tile("myResults","clip","results",1)}${tile("bookVisit","pluscircle","book1")}</div>`,
+ foot:helpBtn(),
+ say:L=>[t(greetKey(),0,L)+", "+t("name",0,L),n?t("nextVisit",0,L)+": "+apptSay(n,L):t("noVisit",0,L),t("myAppts",0,L),t("myMeds",0,L),t("myResults",0,L),t("bookVisit",0,L)]}},
+appts(){
+ const a=sorted(),n=a[0],L=st.lang;
+ return{head:topbar()+`<h1>${t("myAppts")}</h1>`,
+ body:(n?`<div class="card"><span class="eyebrow">${t("nextVisit")}</span><span>${fd(n.date,L,{weekday:"long"})}</span><span class="bigdate">${fd(n.date,L,{day:"numeric",month:"short"})}</span><span class="bigtime">${fTime(n.time,L)}</span><div class="rule"></div>
+  <span class="meta">${ic("heart",20)}${t("t_"+n.type)}</span><span class="meta">${ic("pin",20)}${t("place")}</span>
+  <button class="btn outline" style="margin-top:8px" data-act="resched" data-v="${n.id}">${t("changeDate")}</button>
+  <button class="btn danger" style="min-height:52px;font-size:.95rem" data-act="askCancel" data-v="${n.id}">${t("cancelVisit")}</button></div>`
+  :`<div class="card grey"><b>${t("noVisit")}</b></div>`)+
+  a.slice(1).map(x=>`<div class="card grey"><span class="eyebrow" style="color:var(--muted)">${t("later")}</span><b>${dShort(x.date,L)} · ${fTime(x.time,L)}</b><span>${t("t_"+x.type)}</span>
+  <div class="row" style="margin-top:6px"><button class="btn outline" style="min-height:50px;font-size:.9rem" data-act="resched" data-v="${x.id}">${t("changeDate")}</button><button class="btn danger" style="min-height:50px;font-size:.9rem" data-act="askCancel" data-v="${x.id}">${t("cancelVisit")}</button></div></div>`).join(""),
+ foot:`<button class="btn primary" data-act="go" data-v="book1">${ic("plus")}${t("bookNew")}</button>`+helpBtn(),
+ say:L=>a.length?a.map((x,i)=>(i?t("later",0,L):t("nextVisit",0,L))+": "+apptSay(x,L)):[t("noVisit",0,L)]}},
+book1(){
+ return{head:topbar()+stepHead(1,"whatFor"),
+ body:TYPES.map(k=>`<button class="opt ${draft.type===k?"sel":""}" data-act="pickType" data-v="${k}"><span><b>${t("t_"+k)}</b></span><span class="radio">${draft.type===k?ic("check",20):""}</span></button>`).join(""),
+ foot:`<button class="btn primary" data-act="go" data-v="book2" ${draft.type?"":"disabled"}>${t("next")} ${ic("right")}</button>`+helpBtn(),
+ say:L=>[t("whatFor",0,L),...TYPES.map(k=>t("t_"+k,0,L))]}},
+book2(){
+ const L=st.lang,sl=slots();
+ return{head:topbar()+stepHead(2,"pickDay")+`<div class="sub" style="margin-top:-6px">${t("t_"+draft.type)} · ${t("place")}</div>`,
+ body:sl.map(s=>{const on=draft.date===s.date&&draft.time===s.time,am=s.time<"12:00";
+  return`<button class="opt ${on?"sel":""}" data-act="pickSlot" data-v="${s.date}|${s.time}"><span><b>${dShort(s.date,L)}</b><span class="sub">${ic(am?"sun":"moon",18)}${t(am?"am":"pm")} · ${fTime(s.time,L)}</span></span><span class="radio">${on?ic("check",20):""}</span></button>`}).join("")+
+  (more?"":`<button class="btn quiet" data-act="more">${t("showOther")}</button>`),
+ foot:`<button class="btn primary" data-act="go" data-v="book3" ${draft.date?"":"disabled"}>${t("next")} ${ic("right")}</button>`+helpBtn(),
+ say:L=>[t("pickDay",0,L),...sl.map(s=>dLong(s.date,L)+", "+fTime(s.time,L))]}},
+book3(){
+ return{head:topbar()+stepHead(3,"check"),
+ body:summary(draft),
+ foot:`<button class="btn primary" data-act="confirm">${ic("check")}${t(draft.editId?"confirmChange":"confirm")}</button>`+helpBtn(),
+ say:L=>[t("check",0,L),apptSay(draft,L)]}},
+done(){
+ const k=draft.editId?"changed":"booked";
+ return{head:`<div class="row" style="justify-content:flex-end">${listenBtn()}</div>`,
+ body:`<div class="card okc center" style="padding:24px 16px"><span class="bigok">${ic("check",40)}</span><h1>${t(k)}</h1><span>${t("remind")}</span></div>`+summary(draft),
+ foot:`<button class="btn primary" data-act="homeNow">${t("home")}</button>`+helpBtn(),
+ say:L=>[t(k,0,L),apptSay(draft,L),t("remind",0,L)]}},
+meds(){
+ const L=st.lang,tk=st.taken.ids;
+ const row=m=>{const on=tk.includes(m.id);return`<div class="med ${on?"taken":""}"><span class="pillpic"><i class="${m.pink?"pink":""}"></i></span><span style="min-width:0"><b>${m.name}</b><span class="sub">${t(m.d)} · ${t(m.u)}</span></span>
+  <button class="medbtn" data-act="take" data-v="${m.id}" aria-pressed="${on}">${on?`<span class="tick">${ic("check",20)}</span>${t("taken")}`:t("done")}</button></div>`};
+ return{head:topbar()+`<div><h1>${t("myMeds")}</h1><div class="sub">${t("today")}, ${dShort(todayIso,L)} · ${t("count",{a:tk.length,b:MEDS.length})}</div></div>`,
+ body:`<div class="slot" style="color:var(--rust)">${ic("sun",22)}<span style="color:var(--ink)">${t("mornBf")}</span></div>${MEDS.filter(m=>m.slot==="am").map(row).join("")}
+ <div class="slot" style="color:var(--teal)">${ic("moon",22)}<span style="color:var(--ink)">${t("nightDn")} · ${fTime("20:00",L)}</span></div>${MEDS.filter(m=>m.slot==="pm").map(row).join("")}`,
+ foot:`<button class="btn outline" data-act="order">${t("orderMore")}</button>`+helpBtn(),
+ say:L=>MEDS.map(m=>[t(m.slot==="am"?"mornBf":"nightDn",0,L).replace("·",","),m.name,t(m.d,0,L),t(m.u,0,L),t(tk.includes(m.id)?"taken":"notTaken",0,L)].join(", "))}},
+results(){
+ const L=st.lang,R=[["sugar","HbA1c 7.8 %",82,1],["chol","LDL 2.4 mmol/L",48,0],["bp","128 / 78 mmHg",55,0]];
+ return{head:topbar()+`<div><h1>${t("myResults")}</h1><div class="sub">${dShort(plusBack(8),L)}</div></div>`,
+ body:R.map(([k,v,p,hi])=>`<div class="card res ${hi?"warm":""}"><div class="row"><div><h2>${t("r_"+k)}</h2><span class="val">${v}</span></div><span class="badge ${hi?"hi":""}">${t(hi?"abitHigh":"normal")}</span></div>
+  <div class="bar"><span></span><span></span><span></span><em style="left:${p}%"></em></div><div class="scale"><span>${t("low")}</span><span>${t("normal")}</span><span>${t("high")}</span></div>
+  <p class="msg">${t("m_"+k)}</p></div>`).join(""),
+ foot:helpBtn(),
+ say:L=>R.map(([k,,,hi])=>t("r_"+k,0,L)+": "+t(hi?"abitHigh":"normal",0,L)+". "+t("m_"+k,0,L))}}
+};
+function plusBack(n){const d=new Date();d.setDate(d.getDate()-n);return iso(d)}
+function stepHead(n,k){return`<div><span class="eyebrow">${t("step",{n})}</span><div class="steps" style="margin:6px 0 10px">${[1,2,3].map(i=>`<i class="${i<=n?"on":""}"></i>`).join("")}</div><h1>${t(k)}</h1></div>`}
+function summary(a){const L=st.lang;return`<div class="card"><span>${fd(a.date,L,{weekday:"long"})}</span><span class="bigdate">${fd(a.date,L,{day:"numeric",month:"short"})}</span><span class="bigtime">${fTime(a.time,L)}</span><div class="rule"></div><span class="meta">${ic("heart",20)}${t("t_"+a.type)}</span><span class="meta">${ic("pin",20)}${t("place")}</span></div>`}
+
+function modalHtml(){
+ if(!modal)return"";
+ let h="";
+ if(modal==="help")h=`<h2>${t("helpTitle")}</h2><p>${t("helpBody",{v:VOICES[st.voice].n})}</p><button class="btn help" data-act="callMe">${ic("phone")}${t("callMe")}</button><button class="btn quiet" data-act="closeModal">${t("close")}</button>`;
+ if(modal==="helpDone")h=`<span class="bigok">${ic("phone",34)}</span><p class="center" style="font-weight:700">${t("helpDone")}</p><button class="btn primary" data-act="closeModal">${t("ok")}</button>`;
+ if(modal==="order"){const names=["Metformin","Amlodipine"];h=`<h2>${t("orderTitle")}</h2>${names.map(n=>{const on=orderSel.includes(n);return`<button class="opt ${on?"sel":""}" data-act="orderPick" data-v="${n}"><span class="pillpic"><i class="${n==="Amlodipine"?"pink":""}"></i></span><span><b>${n}</b><span class="sub">${t(n==="Metformin"?"u_sugar":"u_bp")}</span></span><span class="radio box">${on?ic("check",20):""}</span></button>`}).join("")}<button class="btn primary" data-act="orderSend" ${orderSel.length?"":"disabled"}>${t("sendOrder")}</button><button class="btn quiet" data-act="closeModal">${t("close")}</button>`}
+ if(modal==="orderDone")h=`<span class="bigok">${ic("check",40)}</span><h2 class="center">${t("orderDone")}</h2><p class="center"><b>${orderSel.join(" · ")}</b><br>${t("orderInfo",{d:dLong(plus(3),st.lang)})}</p><button class="btn primary" data-act="closeModal">${t("ok")}</button>`;
+ if(modal==="cancel"){const a=st.appts.find(x=>x.id===cancelId);h=`<h2>${t("cancelQ")}</h2><p><b>${t("t_"+a.type)}</b><br>${dLong(a.date,st.lang)} · ${fTime(a.time,st.lang)}</p><button class="btn danger" data-act="doCancel">${t("yesCancel")}</button><button class="btn primary" data-act="closeModal">${t("keep")}</button>`}
+ return`<div class="shade" data-act="shade"><div class="sheet" role="dialog" aria-modal="true">${h}</div></div>`}
+
+let lastScreen="";
+function render(){
+ const cur=nav[nav.length-1],s=SCREENS[cur]();
+ document.documentElement.classList.toggle("big",!!st.big);
+ document.documentElement.lang=st.lang==="zh"?"zh-Hans":st.lang;
+ const app=document.getElementById("app"),old=app.querySelector("main"),keep=old&&cur===lastScreen?old.scrollTop:0;
+ app.innerHTML=`<header>${s.head}</header><main>${s.body}</main><footer>${s.foot}</footer>${modalHtml()}${toastMsg?`<div class="toast" role="status">${toastMsg}</div>`:""}`;
+ app.querySelector("main").scrollTop=keep;lastScreen=cur;
+ if(speaking)setSpeaking(true)}
+function toast(m){toastMsg=m;clearTimeout(toastT);toastT=setTimeout(()=>{toastMsg="";render()},3200);render()}
+function go(s){hush();nav.push(s);render()}
+
+const ACT={
+ go(v){if(v==="book1"){draft={};more=false}go(v)},
+ back(){hush();if(nav.length>1)nav.pop();else nav=["home"];render()},
+ homeNow(){hush();nav=["home"];render()},
+ setLang(v){st.lang=v;save();render()},
+ setVoice(v){st.voice=v;save();render();speak(t("sample",0,VOICES[v].base),v)},
+ langDone(){hush();st.onboarded=true;save();nav=["home"];render()},
+ big(){st.big=!st.big;save();render()},
+ listen(){if(speaking){hush();setSpeaking(false);return}speak(SCREENS[nav[nav.length-1]]().say(vbase()).join("。 ").replace(/。 /g,vbase()==="zh"?"。":". "),st.voice)},
+ pickType(v){draft.type=v;render()},
+ pickSlot(v){[draft.date,draft.time]=v.split("|");render()},
+ more(){more=true;render()},
+ resched(v){const a=st.appts.find(x=>x.id==v);draft={editId:a.id,type:a.type};more=false;go("book2")},
+ confirm(){hush();if(draft.editId){const a=st.appts.find(x=>x.id===draft.editId);if(a){a.date=draft.date;a.time=draft.time}}else st.appts.push({id:Date.now(),type:draft.type,date:draft.date,time:draft.time});save();nav=["home","done"];render()},
+ askCancel(v){cancelId=+v;modal="cancel";render()},
+ doCancel(){st.appts=st.appts.filter(x=>x.id!==cancelId);save();modal=null;toast(t("cancelled"))},
+ take(v){const i=st.taken.ids.indexOf(v);if(i<0)st.taken.ids.push(v);else st.taken.ids.splice(i,1);save();render()},
+ order(){orderSel=[];modal="order";render()},
+ orderPick(v){const i=orderSel.indexOf(v);if(i<0)orderSel.push(v);else orderSel.splice(i,1);render()},
+ orderSend(){modal="orderDone";render()},
+ help(){hush();modal="help";render()},
+ callMe(){modal="helpDone";render()},
+ closeModal(){modal=null;render()},
+ shade(v,e){if(e.target.classList.contains("shade")){modal=null;render()}}
+};
+document.getElementById("app").addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(!b||b.disabled)return;ACT[b.dataset.act](b.dataset.v,e)});
+render();
+</script>
+
+</body>
+</html>
