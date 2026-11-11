@@ -217,10 +217,10 @@ const LANGS=[["en","English","EN"],["zh","华语","华"],["ms","Melayu","BM"],["
 const VOICES={
  english:{n:"English",s:"",base:"en",tags:["en-sg","en-gb","en"]},
  mandarin:{n:"华语",s:"Mandarin",base:"zh",tags:["zh-cn","cmn","zh"]},
- hokkien:{n:"福建话",s:"Hokkien",base:"zh",tags:["nan","zh-tw","zh"]},
+ hokkien:{n:"福建话",s:"Hokkien (beta)",base:"zh",tags:["nan","zh-tw","zh"]},
  cantonese:{n:"广东话",s:"Cantonese",base:"zh",tags:["yue","zh-hk","zh"]},
- teochew:{n:"潮州话",s:"Teochew",base:"zh",tags:["zh-cn","zh"]},
- hakka:{n:"客家话",s:"Hakka",base:"zh",tags:["hak","zh-tw","zh"]},
+ teochew:{n:"潮州话",s:"Teochew (beta)",base:"zh",tags:["zh-cn","zh"]},
+ hakka:{n:"客家话",s:"Hakka (beta)",base:"zh",tags:["hak","zh-tw","zh"]},
  malay:{n:"Melayu",s:"Malay",base:"ms",tags:["ms","id"]},
  tamil:{n:"தமிழ்",s:"Tamil",base:"ta",tags:["ta"]}
 };
@@ -251,8 +251,8 @@ const fromIso=s=>{const[a,b,c]=s.split("-").map(Number);return new Date(a,b-1,c)
 const plus=n=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+n);if(d.getDay()===0)d.setDate(d.getDate()+1);return iso(d)};
 const LOC={en:"en-SG",zh:"zh-CN",ms:"ms-MY",ta:"ta-IN"};
 const fd=(s,L,o)=>{try{return new Intl.DateTimeFormat(LOC[L],o).format(fromIso(s))}catch(e){return s}};
-const dShort=(s,L)=>fd(s,L,{weekday:"short",day:"numeric",month:"short"});
-const dLong=(s,L)=>fd(s,L,{weekday:"long",day:"numeric",month:"long"});
+const dShort=(s,L)=>fd(s,L,{weekday:"short",day:"numeric",month:"short",year:"numeric"});
+const dLong=(s,L)=>fd(s,L,{weekday:"long",day:"numeric",month:"long",year:"numeric"});
 function fTime(hm,L){const[h,m]=hm.split(":").map(Number),h12=h%12||12,x=h12+":"+String(m).padStart(2,"0");
  if(L==="zh")return(h<12?"上午":h<18?"下午":"晚上")+" "+x;
  if(L==="ms")return x+" "+(h<12?"pagi":h<19?"petang":"malam");
@@ -321,7 +321,7 @@ home(){
 appts(){
  const a=sorted(),n=a[0],L=st.lang;
  return{head:topbar()+`<h1>${t("myAppts")}</h1>`,
- body:(n?`<div class="card"><span class="eyebrow">${t("nextVisit")}</span><span>${fd(n.date,L,{weekday:"long"})}</span><span class="bigdate">${fd(n.date,L,{day:"numeric",month:"short"})}</span><span class="bigtime">${fTime(n.time,L)}</span><div class="rule"></div>
+ body:(n?`<div class="card"><span class="eyebrow">${t("nextVisit")}</span><span>${fd(n.date,L,{weekday:"long"})}</span><span class="bigdate">${fd(n.date,L,{day:"numeric",month:"short",year:"numeric"})}</span><span class="bigtime">${fTime(n.time,L)}</span><div class="rule"></div>
   <span class="meta">${ic("heart",20)}${t("t_"+n.type)}</span><span class="meta">${ic("pin",20)}${t("place")}</span>
   <button class="btn outline" style="margin-top:8px" data-act="resched" data-v="${n.id}">${t("changeDate")}</button>
   <button class="btn danger" style="min-height:52px;font-size:.95rem" data-act="askCancel" data-v="${n.id}">${t("cancelVisit")}</button></div>`
@@ -374,7 +374,7 @@ results(){
 };
 function plusBack(n){const d=new Date();d.setDate(d.getDate()-n);return iso(d)}
 function stepHead(n,k){return`<div><span class="eyebrow">${t("step",{n})}</span><div class="steps" style="margin:6px 0 10px">${[1,2,3].map(i=>`<i class="${i<=n?"on":""}"></i>`).join("")}</div><h1>${t(k)}</h1></div>`}
-function summary(a){const L=st.lang;return`<div class="card"><span>${fd(a.date,L,{weekday:"long"})}</span><span class="bigdate">${fd(a.date,L,{day:"numeric",month:"short"})}</span><span class="bigtime">${fTime(a.time,L)}</span><div class="rule"></div><span class="meta">${ic("heart",20)}${t("t_"+a.type)}</span><span class="meta">${ic("pin",20)}${t("place")}</span></div>`}
+function summary(a){const L=st.lang;return`<div class="card"><span>${fd(a.date,L,{weekday:"long"})}</span><span class="bigdate">${fd(a.date,L,{day:"numeric",month:"short",year:"numeric"})}</span><span class="bigtime">${fTime(a.time,L)}</span><div class="rule"></div><span class="meta">${ic("heart",20)}${t("t_"+a.type)}</span><span class="meta">${ic("pin",20)}${t("place")}</span></div>`}
 
 function modalHtml(){
  if(!modal)return"";
