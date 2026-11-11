@@ -42,6 +42,9 @@ h1{font-size:1.45rem;font-weight:800;margin:0;text-wrap:balance;letter-spacing:-
 .chip.listen.on{background:var(--rust-soft);color:var(--rust)}
 .chip.line{background:var(--paper);border:2px solid var(--line)}
 .grow{flex:1;min-width:0}
+.langrow{display:flex;flex-wrap:wrap;gap:6px}
+.lchip{min-height:44px;min-width:48px;padding:0 12px;border-radius:10px;border:2px solid var(--line);background:var(--paper);font-weight:700;font-size:.85rem;display:inline-flex;align-items:center;justify-content:center}
+.lchip.sel{background:var(--ink);border-color:var(--ink);color:#fff}
 
 .btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:60px;padding:8px 16px;border-radius:14px;font-weight:800;font-size:1.05rem;text-align:center}
 .btn.primary{background:var(--teal);color:#fff}
@@ -211,9 +214,19 @@ callMe:["Call me now","现在打给我","Telefon saya sekarang","இப்போ
 close:["Close","关闭","Tutup","மூடு"],
 helpDone:["A helper will call you in about 5 minutes. Keep your phone near you.","服务人员大约 5 分钟内会打给您。请把手机放在身边。","Pembantu akan telefon anda dalam kira-kira 5 minit. Simpan telefon berdekatan.","உதவியாளர் சுமார் 5 நிமிடங்களில் அழைப்பார். தொலைபேசியை அருகில் வைத்திருங்கள்."],
 ok:["OK","好的","OK","சரி"],
-noVoice:["This phone cannot read aloud in this voice.","这部手机无法用这种语音朗读。","Telefon ini tidak dapat membaca dalam suara ini.","இந்தத் தொலைபேசியில் இந்தக் குரல் இல்லை."]
+noVoice:["This phone cannot read aloud in this voice.","这部手机无法用这种语音朗读。","Telefon ini tidak dapat membaca dalam suara ini.","இந்தத் தொலைபேசியில் இந்தக் குரல் இல்லை."],
+myPlan:["My Health Plan","我的健康计划","Pelan Kesihatan Saya","என் சுகாதாரத் திட்டம்"],
+planFrom:["From Dr Lim, your family doctor","来自您的家庭医生林医生","Daripada Dr Lim, doktor keluarga anda","உங்கள் குடும்ப மருத்துவர் டாக்டர் லிம் வழங்கியது"],
+docAdvice:["Doctor's advice","医生的建议","Nasihat doktor","மருத்துவரின் அறிவுரை"],
+adviceMsg:["Keep your blood sugar down. Small changes every day help.","控制好血糖。每天一点小改变都有帮助。","Kawal gula darah anda. Perubahan kecil setiap hari membantu.","இரத்த சர்க்கரையைக் கட்டுக்குள் வைத்திருங்கள். தினமும் சிறு மாற்றங்கள் உதவும்."],
+goalsToday:["My goals today","我今天的目标","Matlamat saya hari ini","இன்றைய என் இலக்குகள்"],
+goalCount:["{a} of {b} done","已完成 {a} / {b}","{a} daripada {b} selesai","{b}-இல் {a} முடிந்தது"],
+g_walk:["Walk for 30 minutes","步行 30 分钟","Berjalan selama 30 minit","30 நிமிடம் நடக்கவும்"],
+g_sugar:["Choose drinks with less sugar","选择少糖饮料","Pilih minuman kurang gula","குறைந்த சர்க்கரை பானங்களைத் தேர்ந்தெடுக்கவும்"],
+g_meds:["Take all my medicine","按时吃完所有的药","Makan semua ubat saya","என் மருந்துகள் அனைத்தையும் எடுக்கவும்"],
+bookCheck:["Book my next check-up","预约下次检查","Tempah pemeriksaan seterusnya","அடுத்த பரிசோதனையைப் பதிவு செய்"]
 };
-const LANGS=[["en","English","EN"],["zh","华语","华"],["ms","Melayu","BM"],["ta","தமிழ்","த"]];
+const LANGS=[["en","English","EN"],["zh","华语","中文"],["ms","Melayu","Melayu"],["ta","தமிழ்","தமிழ்"]];
 const VOICES={
  english:{n:"English",s:"",base:"en",tags:["en-sg","en-gb","en"]},
  mandarin:{n:"华语",s:"Mandarin",base:"zh",tags:["zh-cn","cmn","zh"]},
@@ -261,12 +274,13 @@ function fTime(hm,L){const[h,m]=hm.split(":").map(Number),h12=h%12||12,x=h12+":"
 
 /* ---------- state ---------- */
 const KEY="easycare-v1";
-let st={lang:"en",voice:"english",onboarded:false,big:false,appts:null,taken:{d:"",ids:[]}};
+let st={lang:"en",voice:"english",onboarded:false,big:false,appts:null,taken:{d:"",ids:[]},goals:{d:"",ids:[]}};
 try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s)st=Object.assign(st,s)}catch(e){}
 const todayIso=iso(new Date());
 if(st.appts)st.appts=st.appts.filter(a=>a.date>=todayIso);
 if(!st.appts)st.appts=[{id:1,type:"diabetes",date:plus(2),time:"09:30"},{id:2,type:"eye",date:plus(25),time:"14:00"}];
 if(st.taken.d!==todayIso)st.taken={d:todayIso,ids:(new Date().getHours()>=9)?["m1"]:[]};
+if(!st.goals||st.goals.d!==todayIso)st.goals={d:todayIso,ids:[]};
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}};
 let nav=[st.onboarded?"home":"lang"], modal=null, draft={}, more=false, toastMsg="", toastT=0, orderSel=[], cancelId=null, speaking=false;
 const MEDS=[{id:"m1",name:"Metformin",d:"d_white",u:"u_sugar",slot:"am"},{id:"m2",name:"Amlodipine",d:"d_pink",u:"u_bp",slot:"am",pink:1},{id:"m3",name:"Metformin",d:"d_white",u:"u_sugar",slot:"pm"}];
@@ -307,17 +321,16 @@ lang(){
  <div class="langgrid">${LANGS.map(l=>`<button class="lbtn ${st.lang===l[0]?"sel":""}" data-act="setLang" data-v="${l[0]}">${st.lang===l[0]?ic("check",22):""}${l[1]}</button>`).join("")}</div>
  <div class="row" style="margin-top:8px"><span class="num w">2</span><div><b>${t("voiceHear")}</b><div class="sub">${t("tapSample")}</div></div></div>
  <div class="langgrid">${Object.entries(VOICES).map(([k,v])=>`<button class="vbtn ${st.voice===k?"sel":""}" data-act="setVoice" data-v="${k}">${ic("volume",20)}<span>${v.n}${v.s?`<small>${v.s}</small>`:""}</span></button>`).join("")}</div>`,
- foot:`<button class="btn primary" data-act="langDone">${t("cont")} ${ic("right")}</button>`,
+ foot:`<button class="btn quiet" data-act="big">${ic("text")}${t(st.big?"smaller":"bigger")}</button><button class="btn primary" data-act="langDone">${t("cont")} ${ic("right")}</button>`,
  say:L=>[t("sample",0,L)]}},
 home(){
  const n=sorted()[0],lc=LANGS.find(l=>l[0]===st.lang)[2];
  const tile=(k,i,to,w)=>`<button class="tile ${w?"warm":""}" data-act="go" data-v="${to}"><span class="disc">${ic(i,32)}</span>${t(k)}</button>`;
- return{head:`<div><h1>${t(greetKey())}</h1><div class="sub">${t("name")}</div></div>
- <div class="row">${listenBtn()}<button class="chip line" data-act="big" aria-label="${t(st.big?"smaller":"bigger")}">${ic("text",24)}${st.big?"−":"+"}</button><button class="chip line grow" data-act="go" data-v="lang">${ic("globe",22)}<span>${lc} · ${VOICES[st.voice].n}</span></button></div>`,
- body:`<button class="banner" data-act="go" data-v="appts">${ic("calendar",28)}<span><span class="eyebrow">${t("nextVisit")}</span><br><b>${n?dShort(n.date,st.lang)+" · "+fTime(n.time,st.lang):t("noVisit")}</b></span></button>
- <div class="tiles">${tile("myAppts","calendar","appts")}${tile("myMeds","pill","meds",1)}${tile("myResults","clip","results",1)}${tile("bookVisit","pluscircle","book1")}</div>`,
+ return{head:`<div class="row between"><h1>${t(greetKey())}</h1>${listenBtn()}</div>
+ <div class="langrow">${LANGS.map(l=>`<button class="lchip ${st.lang===l[0]?"sel":""}" data-act="setLang" data-v="${l[0]}">${l[2]}</button>`).join("")}<button class="lchip" data-act="go" data-v="lang" aria-label="${t("voiceHear")}">${ic("globe",20)}</button></div>`,
+ body:` <div class="tiles">${tile("myAppts","calendar","appts")}${tile("myMeds","pill","meds",1)}${tile("myResults","clip","results",1)}${tile("myPlan","heart","plan")}</div>`,
  foot:helpBtn(),
- say:L=>[t(greetKey(),0,L)+", "+t("name",0,L),n?t("nextVisit",0,L)+": "+apptSay(n,L):t("noVisit",0,L),t("myAppts",0,L),t("myMeds",0,L),t("myResults",0,L),t("bookVisit",0,L)]}},
+ say:L=>[t(greetKey(),0,L),t("myAppts",0,L),t("myMeds",0,L),t("myResults",0,L),t("myPlan",0,L)]}},
 appts(){
  const a=sorted(),n=a[0],L=st.lang;
  return{head:topbar()+`<h1>${t("myAppts")}</h1>`,
@@ -363,6 +376,14 @@ meds(){
  <div class="slot" style="color:var(--teal)">${ic("moon",22)}<span style="color:var(--ink)">${t("nightDn")} · ${fTime("20:00",L)}</span></div>${MEDS.filter(m=>m.slot==="pm").map(row).join("")}`,
  foot:`<button class="btn outline" data-act="order">${t("orderMore")}</button>`+helpBtn(),
  say:L=>MEDS.map(m=>[t(m.slot==="am"?"mornBf":"nightDn",0,L).replace("·",","),m.name,t(m.d,0,L),t(m.u,0,L),t(tk.includes(m.id)?"taken":"notTaken",0,L)].join(", "))}},
+plan(){
+ const G=["walk","sugar","meds"],gd=st.goals.ids;
+ return{head:topbar()+`<div><h1>${t("myPlan")}</h1><div class="sub">${t("planFrom")}</div></div>`,
+ body:`<div class="card warm"><span class="eyebrow" style="color:var(--rust)">${t("docAdvice")}</span><p class="msg" style="margin:0">${t("adviceMsg")}</p></div>
+ <div class="slot">${t("goalsToday")} · ${t("goalCount",{a:gd.length,b:G.length})}</div>
+ ${G.map(g=>{const on=gd.includes(g);return`<button class="opt ${on?"sel":""}" data-act="goal" data-v="${g}" aria-pressed="${on}"><span><b>${t("g_"+g)}</b></span><span class="radio box">${on?ic("check",20):""}</span></button>`}).join("")}`,
+ foot:`<button class="btn primary" data-act="go" data-v="book1">${ic("calendar")}${t("bookCheck")}</button>`+helpBtn(),
+ say:L=>[t("myPlan",0,L),t("adviceMsg",0,L),t("goalsToday",0,L),...G.map(g=>t("g_"+g,0,L))]}},
 results(){
  const L=st.lang,R=[["sugar","HbA1c 7.8 %",82,1],["chol","LDL 2.4 mmol/L",48,0],["bp","128 / 78 mmHg",55,0]];
  return{head:topbar()+`<div><h1>${t("myResults")}</h1><div class="sub">${dShort(plusBack(8),L)}</div></div>`,
@@ -402,7 +423,8 @@ const ACT={
  go(v){if(v==="book1"){draft={};more=false}go(v)},
  back(){hush();if(nav.length>1)nav.pop();else nav=["home"];render()},
  homeNow(){hush();nav=["home"];render()},
- setLang(v){st.lang=v;save();render()},
+ setLang(v){const D={en:"english",zh:"mandarin",ms:"malay",ta:"tamil"};if(st.voice===D[st.lang])st.voice=D[v];st.lang=v;hush();save();render()},
+ goal(v){const i=st.goals.ids.indexOf(v);if(i<0)st.goals.ids.push(v);else st.goals.ids.splice(i,1);save();render()},
  setVoice(v){st.voice=v;save();render();speak(t("sample",0,VOICES[v].base),v)},
  langDone(){hush();st.onboarded=true;save();nav=["home"];render()},
  big(){st.big=!st.big;save();render()},
